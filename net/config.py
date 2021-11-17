@@ -1,0 +1,23 @@
+BATCH_SIZE = 2
+NUMBER_CLASSES = 5
+INPUT_SHAPE_IMAGE = (128, 352, 3)
+EPOCHS = 250
+AUGMENTATION_DATA = True
+
+JSON_FILE_NAME = 'data.json'
+IMAGES_PATH = 'images'
+MASKS_PATH = 'masks'
+
+DATASETS = ['first_data']
+# DATASETS = ['CVC-300', 'CVC-612', 'CVC-ClinicDB', 'HyperKvasir']
+
+LEARNING_RATE = 0.0001
+BACKBONE = 'resnet18'
+ENCODER_WEIGHTS = 'imagenet'
+OUTPUT_ACTIVATION = 'softmax'
+LAYER_ACTIVATION = 'relu'
+MODEL_NAME = 'Unet'
+SAVE_MODEL_EVERY_EPOCH = False
+
+LOGS = 'logs'
+SAVE_MODELS = 'save_models'
