@@ -8,7 +8,7 @@ import albumentations as A
 from tensorflow import keras
 
 
-from config import BATCH_SIZE, INPUT_SHAPE_IMAGE, JSON_FILE_NAME, NUMBER_CLASSES, AUGMENTATION_DATA
+from ..config import BATCH_SIZE, INPUT_SHAPE_IMAGE, JSON_FILE_NAME, NUMBER_CLASSES, AUGMENTATION_DATA
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -77,10 +77,8 @@ class DataGenerator(keras.utils.Sequence):
             img = augmented['image']
             mask_image = augmented['mask']
             images[i, :, :, :] = img
-            masks[i, :, :, 0] = np.where(mask_image == 50, 1, 0)  # road
-            masks[i, :, :, 1] = np.where(mask_image == 100, 1, 0)  # white line
-            masks[i, :, :, 2] = np.where(mask_image == 150, 1, 0) # yellow line
-            masks[i, :, :, 3] = np.where(mask_image == 200, 1, 0) # red line
+            masks[i, :, :, 0] = np.where(mask_image == 20, 1, 0)  # car
+            masks[i, :, :, 1] = np.where(mask_image == 40, 1, 0)  # number
             masks[i, :, :, -1] = np.where(mask_image == 0, 1, 0)  # background
         images = image_normalization(images)
         return images, masks

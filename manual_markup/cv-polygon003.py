@@ -8,7 +8,7 @@ colors = {0: (255, 0, 0), 1: (0, 255, 0), 2: (0, 0, 255), 3: (255, 255, 0), 4: (
 
 
 def on_mouse(event, x, y, flags, param):
-    global poly, current_polygon, selected_class
+    global poly, current_polygon, selected_class,img
     img2 = img.copy()
     if event == cv2.EVENT_LBUTTONDOWN:
         poly[selected_class][current_polygon].append((x, y))
@@ -31,7 +31,6 @@ def on_mouse(event, x, y, flags, param):
                 points = points.reshape((-1, 1, 2))
                 mask = cv2.fillPoly(mask.copy(), [points], colors[cur_class])  # #
                 img2 = cv2.addWeighted(src1=img2, alpha=1, src2=mask, beta=0.2, gamma=0)
-
     cv2.imshow('image', img2)
 
 
@@ -76,8 +75,9 @@ for i, filename in enumerate(list(os.walk(work_folder))[0][2]):
     img = cv2.resize(img, (512, 512))
     cv2.namedWindow('image')
     cv2.setMouseCallback('image', on_mouse)
+    cv2.imshow('image', img)
     while True:
-        key = cv2.waitKey(5)
+        key = cv2.waitKey(100)
         # if key != -1:
         #     print(key)
         if key == 120 or key == 247:

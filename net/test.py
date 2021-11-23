@@ -10,8 +10,6 @@ from tqdm import tqdm
 
 from config import INPUT_SHAPE_IMAGE
 from src import DataGenerator, build_model
-sm.set_framework('tf.keras')
-sm.framework()
 
 
 def preparing_frame(image: np.ndarray, model) -> np.ndarray:
@@ -26,13 +24,7 @@ def preparing_frame(image: np.ndarray, model) -> np.ndarray:
     image = cv2.resize(image, (INPUT_SHAPE_IMAGE[1], INPUT_SHAPE_IMAGE[0]))
     mask = model.predict(np.expand_dims(image, axis=0) / 255.0)[0]
     mask = np.where(mask >= 0.5, 1, 0)
-    # дорога
-    image[:, :, 0] = np.where(mask[:, :, 0] == 1, 0, image[:, :, 0])
-    image[:, :, 1] = np.where(mask[:, :, 0] == 1, 0, image[:, :, 1])
-    image[:, :, 2] = np.where(mask[:, :, 0] == 1, 0, image[:, :, 2])
-    image[:, :, 1] = np.where(mask[:, :, 0] == 1, 120, image[:, :, 1])
 
-    # белая линия
     image[:, :, 0] = np.where(mask[:, :, 1] == 1, 0, image[:, :, 0])
     image[:, :, 1] = np.where(mask[:, :, 1] == 1, 0, image[:, :, 1])
     image[:, :, 2] = np.where(mask[:, :, 1] == 1, 0, image[:, :, 2])
@@ -45,14 +37,6 @@ def preparing_frame(image: np.ndarray, model) -> np.ndarray:
     image[:, :, 2] = np.where(mask[:, :, 2] == 1, 0, image[:, :, 2])
     image[:, :, 1] = np.where(mask[:, :, 2] == 1, 255, image[:, :, 1])
     image[:, :, 2] = np.where(mask[:, :, 2] == 1, 255, image[:, :, 2])
-
-    # красная
-    image[:, :, 0] = np.where(mask[:, :, 3] == 1, 0, image[:, :, 0])
-    image[:, :, 1] = np.where(mask[:, :, 3] == 1, 0, image[:, :, 1])
-    image[:, :, 2] = np.where(mask[:, :, 3] == 1, 0, image[:, :, 2])
-    image[:, :, 2] = np.where(mask[:, :, 3] == 1, 255, image[:, :, 2])
-
-    
     # image[:, :, 1] = np.where(mask[:, :, 2] == 1, 250, image[:, :, 1]) жёлтая
 
     return image
@@ -113,7 +97,6 @@ def show_batch(data_path: str):
             cv2.waitKey(0)
 
 
-
 def test_metrics_and_time(mode: str) -> None:
     """
     This function calculates the average value of loss and metrics as well as inference time and average fps.
@@ -126,7 +109,7 @@ def test_metrics_and_time(mode: str) -> None:
     # model = build_model()
     model.load_weights(args.weights)
     model.compile(loss=tf.keras.losses.binary_crossentropy, metrics=[
-                        'accuracy', sm.metrics.iou_score, sm.metrics.precision, sm.metrics.recall,  sm.metrics.f1_score
+        'accuracy', sm.metrics.iou_score, sm.metrics.precision, sm.metrics.recall, sm.metrics.f1_score
     ])
 
     if mode == 'metrics':
@@ -160,7 +143,8 @@ def parse_args() -> argparse.Namespace:
                                                             'average fps on the validation dataset will be calculated.')
     parser.add_argument('--gpu', type=str, default='_', help='If you want to use the GPU, you must specify the number '
                                                              'of the video card that you want to use.')
-    parser.add_argument('--data_path', type=str, default='data/first_data', help='path to Dataset where there is a json file')
+    parser.add_argument('--data_path', type=str, default='data/first_data',
+                        help='path to Dataset where there is a json file')
     parser.add_argument('--json_name', type=str, default='data.json', help='path to Dataset where there is a json file')
     parser.add_argument('--batch', action='store_true', help='If True, the screen will display batches '
                                                              'from data_generator.')
@@ -191,10 +175,9 @@ if __name__ == '__main__':
 
 model = build_model()
 model.load_weights("Unetresnet18.h5")
-img = cv2.imread('111.jpg')
-img_detect = img[img.shape[0]//2:]
-img_masked = preparing_frame(image=img_detect, model=model)
-img_masked = cv2.resize(img_masked, (img.shape[1], img.shape[0]//2))
-result = np.vstack((img[:img.shape[0]//2], img_masked))
-result = np.hstack((img, result))
+img = cv2.imread('20211006_073141.jpg')
+# img_detect = img[img.shape[0]//2:]
+img_masked = preparing_frame(image=img, model=model)
+img_masked = cv2.resize(img_masked, (img.shape[1], img.shape[0]))
+result = np.hstack((img, img_masked))
 cv2.imwrite('result.jpg', result)

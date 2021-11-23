@@ -22,13 +22,12 @@ def prepare_data(datasets: List, data_path: str, proportion_test_images: float, 
     for i in datasets:
         path.append(os.path.join(data_path, i, 'images'))
         path.append(os.path.join(data_path, i, 'masks'))
+
     images = []
     for image_path in path:
-        
-        g = image_path.split('\\') # '\\' if windows,  '/' if linux
+        g = image_path.split('/')
         if 'images' in g:
             for img in os.listdir(image_path):
-                print(os.path.join(image_path, img))
                 images.append(os.path.join(image_path, img))
 
     shuffle_images = random.sample(images, len(images))

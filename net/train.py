@@ -11,8 +11,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from config import (JSON_FILE_NAME, EPOCHS, LEARNING_RATE, SAVE_MODELS, INPUT_SHAPE_IMAGE, MODEL_NAME,
                     BACKBONE, LOGS)
 from src import build_model, DataGenerator, LogCallback
-sm.set_framework('tf.keras')
-sm.framework()
+
 
 def train(data_path: str, input_shape_image: Tuple[int, int, int] = INPUT_SHAPE_IMAGE) -> None:
     """
@@ -44,7 +43,7 @@ def train(data_path: str, input_shape_image: Tuple[int, int, int] = INPUT_SHAPE_
                            sm.metrics.f1_score]
                   )
     model.summary()
-    early = EarlyStopping(monitor='loss', min_delta=0, patience=20, verbose=1, mode='auto')
+    early = EarlyStopping(monitor='loss', min_delta=0, patience=30, verbose=1, mode='auto')
     checkpoint_filepath = os.path.join(save_current_model, MODEL_NAME + BACKBONE + '.h5')
     model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_filepath,
